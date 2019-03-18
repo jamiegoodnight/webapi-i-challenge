@@ -25,8 +25,65 @@ server.get('/users', (req, res) => {
         res.status(200).json(users)
     })
     .catch(err => {
-        res.status(500).json({message: 'The users information could not be retrieved.'})
+        res.status(500).json({message: 'the users information could not be retrieved'})
     })
 })  
 
+
+// Get Users By ID - Return specific user in db 
+
+server.get('/users/:id', (req, res) => {
+    const id = req.params.id;
+    db
+    .findById(id)
+    .then(user => {
+        res.status(200).json(user)
+    })
+    .catch(err => {
+        req.status(404).json({message: 'user with the specified id does not exist'})
+    })
+})
+
+// Delete User By ID - Delete a specific user in db
+
+server.delete('/users/:id', (req, res) => {
+    const id = req.params.id;
+    db
+    .remove(id)
+    .then(deleted => {
+        if (deleted){
+            res.status(204).end();
+        } else {
+            res.status(404).json({message: 'the user with the specified id could not be found'})
+        }
+    })
+    .catch(err => {
+        res.status(500).json({message: 'the user could not be removed'})
+    })
+})
+
+
+// Post User = Add a user to the db
+
+server.post('/users', (req, res) => {
+    const newUser = req.body;
+
+    if (newUser.name && newUser.bio){
+        db
+        .insert(newUser)
+        then(user => {
+            res.status(201).json(user)
+        })
+        .catch(err => {
+            res.status(500).json({message: 'there was an error while saving user'})
+        })
+    } else {
+        db
+        .catch(err => {
+            res.status(400).json({message: 'please provide a name and bio for this user'})
+        })
+    }
+})
+
+// Put User = Update a user in the db 
 
