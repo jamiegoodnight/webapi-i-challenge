@@ -78,12 +78,40 @@ server.post('/users', (req, res) => {
             res.status(500).json({message: 'there was an error while saving user'})
         })
     } else {
-        db
-        .catch(err => {
-            res.status(400).json({message: 'please provide a name and bio for this user'})
-        })
+        res.status(400).json({message: 'please provide a name and bio for this user'})
+
     }
 })
 
 // Put User = Update a user in the db 
 
+server.put('/users/:id', (req, res) => {
+    const id = req.params.id;
+    const updates = req.body;
+
+    if(updates.name || updates.bio){
+        db
+        .update(id, updates)
+        .then(updated => {
+            if(updated){
+                res.status(200).json(updated)
+            } else {
+                res.status(404).json({message: 'the user with the specified id does not exist'})
+            } 
+        })
+        .catch(err => {
+            res.status(500).json({message: 'the user could not be removed'})
+        })           
+    } else {
+        res.status(400).json({message: 'please provide a name and bio for this user'})
+    }
+})
+
+
+// res.status(200).json(updates)
+//             } else {
+//                 res.status(404).json({message: 'the user with the specified id does not exist'})
+//             }
+//         .catch(err => {
+            
+//         })
